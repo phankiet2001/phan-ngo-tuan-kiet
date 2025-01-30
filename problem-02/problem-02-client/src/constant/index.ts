@@ -1,0 +1,1 @@
+export const TOKEN_SVG_URL = 'https://raw.githubusercontent.com/Switcheo/token-icons/main/tokens/';
