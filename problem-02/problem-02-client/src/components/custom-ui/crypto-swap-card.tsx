@@ -88,6 +88,7 @@ export const CryptoSwapCard: React.FC<WithThemeProps> = ({
               shouldValidate: true,
             });
           }}
+          disabled
           excludeToken={fromValue.currency}
         />
         <CryptoSwapMetadata fromValue={fromValue} toValue={toValue} />
