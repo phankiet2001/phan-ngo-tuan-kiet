@@ -79,6 +79,7 @@ export const CryptoInput = forwardRef<HTMLInputElement, CryptoInputProps>(
                 inputClassName
               )}
               ref={ref}
+              min={0}
               value={inputValue?.amount || ""}
               onChange={(e) => handleOnChange(Number(e.target.value), "amount")}
               {...props}

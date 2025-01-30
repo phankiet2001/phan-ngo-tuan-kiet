@@ -19,7 +19,7 @@ export const CryptoSwapCard: React.FC<WithThemeProps> = ({
   const {
     setValue,
     watch,
-    formState: { defaultValues },
+    formState: { errors, defaultValues },
   } = useForm<SwapSchema>({
     resolver: zodResolver(swapSchema),
     defaultValues: {
@@ -42,14 +42,21 @@ export const CryptoSwapCard: React.FC<WithThemeProps> = ({
   useEffect(() => {
     const subscription = watch((value) => {
       const amount = exchangeToken(value.from, value.to);
-      setValue("to", {
-        currency: value.to?.currency || "",
-        amount: Number(amount || 0),
-      });
+      if (value.from?.amount && value.from.amount > 0) {
+        setValue("to", {
+          currency: value.to?.currency || "",
+          amount: Number(amount || 0),
+        });
+      } else {
+        setValue("to", {
+          currency: value.to?.currency || "",
+          amount: 0,
+        });
+      }
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, exchangeToken, setValue]);
+  }, [watch, exchangeToken, setValue, errors]);
 
   return (
     <Card className="w-full mx-auto bg-gradient-to-b from-purple-900/80 via-purple-900/70 to-purple-950/90 border-none shadow-xl backdrop-blur-sm">

@@ -25,6 +25,7 @@ export const useTokens = () => {
   }, [tokenResponse.data]);
 
   const exchangeToken = useCallback((from?: Partial<TokenAmount>, to?: Partial<TokenAmount>) => {
+    if (from?.amount && from.amount <= 0) return 0;
     const exchangeRate = getExchangeRate(from, to);
     if (!exchangeRate) return;
     
