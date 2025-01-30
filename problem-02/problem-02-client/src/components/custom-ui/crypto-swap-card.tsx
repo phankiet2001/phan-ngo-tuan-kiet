@@ -19,7 +19,7 @@ export const CryptoSwapCard: React.FC<WithThemeProps> = ({
   const {
     setValue,
     watch,
-    formState: { errors, defaultValues },
+    formState: { defaultValues },
   } = useForm<SwapSchema>({
     resolver: zodResolver(swapSchema),
     defaultValues: {
@@ -40,23 +40,20 @@ export const CryptoSwapCard: React.FC<WithThemeProps> = ({
   const toValue = watch("to");
 
   useEffect(() => {
-    const subscription = watch((value) => {
+    const subscription = watch((value, { name }) => {
+      if (!name) return;
+      if (!name.startsWith('from') && name !== 'to.currency') return;
+      if (!value.from?.amount && !value.to?.currency) return;
+
       const amount = exchangeToken(value.from, value.to);
-      if (value.from?.amount && value.from.amount > 0) {
-        setValue("to", {
-          currency: value.to?.currency || "",
-          amount: Number(amount || 0),
-        });
-      } else {
-        setValue("to", {
-          currency: value.to?.currency || "",
-          amount: 0,
-        });
-      }
+      setValue("to", {
+        currency: value.to?.currency || "",
+        amount: Number(amount || 0),
+      }, { shouldValidate: true });
     });
 
     return () => subscription.unsubscribe();
-  }, [watch, exchangeToken, setValue, errors]);
+  }, [watch, exchangeToken, setValue]);
 
   return (
     <Card className="w-full mx-auto bg-gradient-to-b from-purple-900/80 via-purple-900/70 to-purple-950/90 border-none shadow-xl backdrop-blur-sm">
@@ -91,7 +88,7 @@ export const CryptoSwapCard: React.FC<WithThemeProps> = ({
           value={toValue}
           defaultValue={defaultValues?.to?.currency}
           onValueChange={(value) => {
-            setValue("to", value, {
+            setValue("to.currency", value.currency, {
               shouldValidate: true,
             });
           }}
